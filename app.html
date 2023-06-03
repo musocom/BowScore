@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Compteur de points</title>
+  <style>
+    .button {
+      display: inline-block;
+      padding: 10px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+      align-items: center;
+    }
+
+    .button:hover {
+      background-color: #45a049;
+    }
+
+    .column {
+      float: left;
+      width: 50%;
+    }
+
+    .score-container {
+      background-color: #f2f2f2;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+
+    .details-container {
+      background-color: #f9f9f9;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .details-container span {
+      display: inline-block;
+      padding: 5px;
+      margin: 2px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .details-container .score-10,
+    .details-container .score-9 {
+      background-color: yellow;
+    }
+
+    .details-container .score-8,
+    .details-container .score-7 {
+      background-color: red;
+      color: white;
+    }
+
+    .details-container .score-6,
+    .details-container .score-5 {
+      background-color: blue;
+      color: white;
+    }
+
+    .details-container .score-4,
+    .details-container .score-3 {
+      background-color: black;
+      color: white;
+    }
+
+    .details-container .score-2,
+    .details-container .score-1 {
+      background-color: white;
+      color: black;
+    }
+
+    .series-container {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      padding: 10px;
+    }
+
+    .volee {
+      margin-bottom: 10px;
+    }
+
+    .volee-number {
+      font-weight: bold;
+    }
+
+    .volee:not(:first-child) {
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Compteur de points</h1>
+  <div class="score-container">
+    <h2>Score actuel : <span id="score">0</span></h2>
+  </div>
+  <div>
+    <button class="button" onclick="ajouterPoint(10)">10</button>
+    <button class="button" onclick="ajouterPoint(9)">9</button>
+    <button class="button" onclick="ajouterPoint(8)">8</button>
+    <button class="button" onclick="ajouterPoint(7)">7</button>
+    <button class="button" onclick="ajouterPoint(6)">6</button>
+    <button class="button" onclick="ajouterPoint(5)">5</button>
+    <button class="button" onclick="ajouterPoint(4)">4</button>
+    <button class="button" onclick="ajouterPoint(3)">3</button>
+    <button class="button" onclick="ajouterPoint(2)">2</button>
+    <button class="button" onclick="ajouterPoint(1)">1</button>
+    <button class="button" onclick="ajouterPoint(0)">M</button>
+    <button class="button" onclick="ajouterVolee()">Ajouter la volée</button>
+    <button class="button" onclick="supprimerDerniereFleche()">Supprimer dernière flèche</button>
+    <button class="button" onclick="supprimerDerniereVolee()">Supprimer dernière volée</button>
+    <button class="button" onclick="effacerScore()">Effacer</button>
+  </div>
+  <div class="column">
+    <h2>Série 1</h2>
+    <div class="series-container">
+      <div class="volee">
+        <span class="volee-number">Volée 1:</span>
+        <div class="details-container" id="details11"></div>
+      </div>
+      <div class="volee">
+        <span class="volee-number">Volée 2:</span>
+        <div class="details-container" id="details12"></div>
+      </div>
+      <div class="volee">
+        <span class="volee-number">Volée 3:</span>
+        <div class="details-container" id="details13"></div>
+      </div>
+      <div class="volee">
+        <span class="volee-number">Volée 4:</span>
+        <div class="details-container" id="details14"></div>
+      </div>
+      <div class="volee">
+        <span class="volee-number">Volée 5:</span>
+        <div class="details-container" id="details15"></div>
+      </div>
+      <div class="volee">
+        <span class="volee-number">Volée 6:</span>
+        <div class="details-container" id="details16"></div>
+      </div>
+    </div>
+  </div>
+  <div class="column">
+    <h2>Série 2</h2>
+    <div class="series-container">
+      <div class="volee">
+        <span class="volee-number">Volée 1:</span>
+        <div class="details-container" id="details21"></div>
+      </div>
+      <div class="volee">
+        <span class="volee-number">Volée 2:</span>
+        <div class="details-container" id="details22"></div>
+      </div>
+      <div class="volee">
+        <span class="volee-number">Volée 3:</span>
+        <div class="details-container" id="details23"></div>
+      </div>
+      <div class="volee">
+        <span class="volee-number">Volée 4:</span>
+        <div class="details-container" id="details24"></div>
+      </div>
+      <div class="volee">
+        <span class="volee-number">Volée 5:</span>
+        <div class="details-container" id="details25"></div>
+      </div>
+      <div class="volee">
+        <span class="volee-number">Volée 6:</span>
+        <div class="details-container" id="details26"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var scoreTotal = 0; // Variable pour stocker le score total
+    var voleeNumber = 1; // Variable pour suivre le numéro de la volée
+    var serieNumber = 1; // Variable pour suivre le numéro de la série
+
+    // Fonction appelée lorsqu'un bouton de point est cliqué
+    function ajouterPoint(point) {
+      var score = document.getElementById("score");
+      var currentScore = parseInt(score.textContent);
+      var newScore = currentScore + point;
+
+      if (newScore <= 720) {
+        score.textContent = newScore;
+        scoreTotal = newScore;
+      }
+
+      var details = document.getElementById("details" + serieNumber + voleeNumber);
+      var span = document.createElement("span");
+      span.textContent = point;
+      span.className = "score-" + point;
+      details.appendChild(span);
+
+      if (details.childElementCount % 6 === 0) {
+        ajouterVolee(); // Ajouter une nouvelle volée après chaque 6ème point
+      }
+    }
+
+    // Fonction appelée lorsque le bouton Supprimer dernière flèche est cliqué
+    function supprimerDerniereFleche() {
+  var details = document.getElementById("details" + serieNumber + voleeNumber);
+  var lastChild = details.lastChild;
+  if (lastChild) {
+    details.removeChild(lastChild);
+    var lastScore = parseInt(lastChild.textContent);
+    scoreTotal -= lastScore;
+    document.getElementById("score-total").textContent = "Score total : " + scoreTotal;
+  }
+}
+
+
+    // Fonction appelée lorsque le bouton Supprimer dernière volée est cliqué
+    function supprimerDerniereVolee() {
+  var voleeContainer = document.getElementById("details" + serieNumber);
+  var lastVolee = voleeContainer.lastElementChild;
+  if (lastVolee) {
+    voleeContainer.removeChild(lastVolee);
+    if (voleeNumber > 1) {
+      voleeNumber--;
+    } else {
+      serieNumber--;
+      voleeNumber = 6;
+    }
+    var lastVoleeScores = lastVolee.getElementsByClassName("score-point");
+    for (var i = 0; i < lastVoleeScores.length; i++) {
+      var scoreToRemove = parseInt(lastVoleeScores[i].textContent);
+      scoreTotal -= scoreToRemove;
+    }
+    document.getElementById("score-total").textContent = "Score total : " + scoreTotal;
+  }
+}
+
+
+    // Fonction appelée lorsque le bouton Effacer est cliqué
+    function effacerScore() {
+      var score = document.getElementById("score");
+      score.textContent = "0";
+      scoreTotal = 0; // Réinitialiser le score total
+
+      for (var i = 1; i <= 2; i++) {
+        for (var j = 1; j <= 6; j++) {
+          var details = document.getElementById("details" + i + j);
+          details.textContent = "";
+        }
+      }
+
+      voleeNumber = 1; // Réinitialiser le numéro de volée
+      serieNumber = 1; // Réinitialiser le numéro de série
+    }
+
+    // Fonction appelée lorsque le bouton Ajouter la volée est cliqué
+    function ajouterVolee() {
+      if (voleeNumber <= 6) {
+        voleeNumber++;
+      }
+
+      if (voleeNumber === 7) {
+        voleeNumber = 1;
+        serieNumber++;
+
+        if (serieNumber > 2) {
+          // Dépassé le nombre de séries maximum (2)
+          return;
+        }
+      }
+
+      var voleeContainer = document.getElementById("details" + serieNumber);
+      var voleeDiv = document.createElement("div");
+      voleeDiv.className = "volee";
+      var voleeNumberSpan = document.createElement("span");
+      voleeNumberSpan.className = "volee-number";
+      voleeNumberSpan.textContent = "Volée " + voleeNumber + ":";
+      var detailsContainer = document.createElement("div");
+      detailsContainer.className = "details-container";
+      detailsContainer.id = "details" + serieNumber + voleeNumber;
+      voleeDiv.appendChild(voleeNumberSpan);
+      voleeDiv.appendChild(detailsContainer);
+      voleeContainer.appendChild(voleeDiv);
+    }
+  </script>
+  <button class="button" onclick="exportTableAsJPG()">Partager/Enregistrer le tableau</button>
+
+  <!-- Inclure la bibliothèque html2canvas -->
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+  <script>
+    // Fonction pour exporter le tableau en tant qu'image JPG
+    function exportTableAsJPG() {
+      // Récupérer les séries et le score total
+      var series1 = document.getElementById("series1");
+      var series2 = document.getElementById("series2");
+      var scoreTotal = document.getElementById("score-total");
+
+      // Utiliser html2canvas pour générer une capture d'écran des éléments
+      html2canvas(document.body).then(function(canvas) {
+        // Convertir le canvas en URL de données au format JPG
+        var imageURL = canvas.toDataURL("image/jpeg");
+
+        // Créer un lien de téléchargement
+        var link = document.createElement("a");
+        link.href = imageURL;
+        link.download = "tableau.jpg";
+        link.click();
+      }).catch(function(error) {
+        console.error("Une erreur s'est produite lors de la capture d'écran : ", error);
+      });
+    }
+  </script>
+</body>
+</html>
