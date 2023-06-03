@@ -3,6 +3,35 @@
 <head>
   <title>Compteur de points</title>
   <style>
+    /* Styles CSS communs */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* Styles CSS pour les appareils de petite taille */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      .container {
+        width: 100%;
+      }
+      .button {
+        margin-top: 10px;
+      }
+    }
+
+    /* Styles CSS pour les appareils de taille moyenne et grande */
+    @media (min-width: 481px) {
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+    }
+    </style>
+  <style>
     .button {
       display: inline-block;
       padding: 10px;
